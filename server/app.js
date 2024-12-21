@@ -7,10 +7,16 @@ const app = express();
 // ! middleware
 app.use(bodyParser.json());
 
-// ! route imports
+// ! imports
 const helloRouter = require("./routes/helloRoute");
+const canvasRouter = require("./routes/canvasRoute");
+const errorHandlerMiddleware = require("./middlewares/errorhandler");
 
 // ! routes
 app.use("/hello", helloRouter);
+app.use("/canvas", canvasRouter);
+
+// ! middlewares
+app.use(errorHandlerMiddleware);
 
 module.exports = app;
