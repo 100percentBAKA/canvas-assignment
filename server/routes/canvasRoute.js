@@ -1,26 +1,91 @@
+const express = require("express");
+const router = express.Router();
+const canvasController = require("../controllers/canvasController");
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DrawCanvas:
+ *       type: object
+ *       required:
+ *         - width
+ *         - height
+ *       properties:
+ *         width:
+ *           type: number
+ *           description: The width of the canvas
+ *         height:
+ *           type: number
+ *           description: The height of the canvas
+ *     DrawText:
+ *       type: object
+ *       required:
+ *         - text
+ *         - x
+ *         - y
+ *       properties:
+ *         text:
+ *           type: string
+ *           description: The text to draw
+ *         x:
+ *           type: number
+ *           description: X coordinate
+ *         y:
+ *           type: number
+ *           description: Y coordinate
+ *         fontSize:
+ *           type: number
+ *           description: Font size in pixels
+ *           default: 20
+ *         color:
+ *           type: string
+ *           description: Text color
+ *           default: "black"
+ *     DrawElement:
+ *       type: object
+ *       required:
+ *         - type
+ *         - x
+ *         - y
+ *       properties:
+ *         type:
+ *           type: string
+ *           enum: [rectangle, circle]
+ *           description: Type of shape to draw
+ *         x:
+ *           type: number
+ *           description: X coordinate
+ *         y:
+ *           type: number
+ *           description: Y coordinate
+ *         width:
+ *           type: number
+ *           description: Width (required for rectangle)
+ *         height:
+ *           type: number
+ *           description: Height (required for rectangle)
+ *         radius:
+ *           type: number
+ *           description: Radius (required for circle)
+ *         color:
+ *           type: string
+ *           description: Shape color
+ *           default: "black"
+ */
+
 /**
  * @swagger
  * /canvas/draw-canvas:
  *   post:
- *     summary: Initialize a new canvas
- *     description: Creates a canvas with the specified width and height.
- *     tags:
- *       - Canvas
+ *     summary: Initialize a new canvas with specified dimensions
+ *     tags: [Canvas]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               width:
- *                 type: integer
- *                 description: The width of the canvas
- *                 example: 800
- *               height:
- *                 type: integer
- *                 description: The height of the canvas
- *                 example: 600
+ *             $ref: '#/components/schemas/DrawCanvas'
  *     responses:
  *       200:
  *         description: Canvas initialized successfully
@@ -31,120 +96,30 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Canvas initialized
  *                 width:
- *                   type: integer
- *                   example: 800
+ *                   type: number
  *                 height:
- *                   type: integer
- *                   example: 600
+ *                   type: number
  *       400:
- *         description: Missing width or height
+ *         description: Width and height are required
  */
+router.post("/draw-canvas", canvasController.drawCanvas);
 
 /**
  * @swagger
  * /canvas/draw-text:
  *   post:
- *     summary: Add text to the canvas
- *     description: Draws text on the canvas at the specified coordinates.
- *     tags:
- *       - Canvas
+ *     summary: Draw text on the canvas
+ *     tags: [Canvas]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               text:
- *                 type: string
- *                 description: The text to draw
- *                 example: Hello, world!
- *               x:
- *                 type: integer
- *                 description: The x-coordinate for the text
- *                 example: 100
- *               y:
- *                 type: integer
- *                 description: The y-coordinate for the text
- *                 example: 100
- *               fontSize:
- *                 type: integer
- *                 description: Font size (optional)
- *                 example: 20
- *               color:
- *                 type: string
- *                 description: Text color (optional)
- *                 example: black
+ *             $ref: '#/components/schemas/DrawText'
  *     responses:
  *       200:
- *         description: Text added to canvas
- *       400:
- *         description: Canvas not initialized or missing parameters
- */
-
-/**
- * @swagger
- * /canvas/draw-element:
- *   post:
- *     summary: Draw an element on the canvas
- *     description: Draws a rectangle, circle, or text on the canvas.
- *     tags:
- *       - Canvas
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               type:
- *                 type: string
- *                 description: The type of element to draw (rectangle, circle, text)
- *                 example: rectangle
- *               x:
- *                 type: integer
- *                 description: The x-coordinate
- *                 example: 100
- *               y:
- *                 type: integer
- *                 description: The y-coordinate
- *                 example: 100
- *               width:
- *                 type: integer
- *                 description: The width (required for rectangle)
- *                 example: 200
- *               height:
- *                 type: integer
- *                 description: The height (required for rectangle)
- *                 example: 100
- *               radius:
- *                 type: integer
- *                 description: The radius (required for circle)
- *                 example: 50
- *               color:
- *                 type: string
- *                 description: The color of the element
- *                 example: blue
- *     responses:
- *       200:
- *         description: Element added successfully
- *       400:
- *         description: Canvas not initialized or invalid parameters
- */
-
-/**
- * @swagger
- * /canvas/export-canvas:
- *   get:
- *     summary: Export the canvas as an HTML file
- *     description: Exports the current canvas as an HTML file containing an image of the canvas.
- *     tags:
- *       - Canvas
- *     responses:
- *       200:
- *         description: Canvas exported successfully
+ *         description: Text added successfully
  *         content:
  *           application/json:
  *             schema:
@@ -152,46 +127,99 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Canvas exported successfully
- *                 filePath:
- *                   type: string
- *                   example: /path/to/canvas.html
  *       400:
- *         description: Canvas not initialized
- *       500:
- *         description: Failed to export canvas
+ *         description: Canvas not initialized or missing required parameters
  */
+router.post("/draw-text", canvasController.drawText);
 
 /**
  * @swagger
- * /canvas/canvas-download:
- *   get:
- *     summary: Download the canvas as a PNG file
- *     description: Exports the current canvas as a PNG image file for download.
- *     tags:
- *       - Canvas
+ * /canvas/draw-element:
+ *   post:
+ *     summary: Draw a shape on the canvas
+ *     tags: [Canvas]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DrawElement'
  *     responses:
  *       200:
- *         description: PNG file ready for download
+ *         description: Element added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Canvas not initialized or invalid parameters
+ */
+router.post("/draw-element", canvasController.drawElement);
+
+/**
+ * @swagger
+ * /canvas/export-html:
+ *   get:
+ *     summary: Export canvas as HTML file
+ *     tags: [Canvas]
+ *     responses:
+ *       200:
+ *         description: HTML file download
+ *         content:
+ *           text/html:
+ *             schema:
+ *               type: string
+ *               format: binary
  *       400:
  *         description: Canvas not initialized
  *       500:
- *         description: Failed to save canvas as PNG
+ *         description: Error during file generation or download
  */
-const express = require("express");
-const router = express.Router();
-const {
-  drawCanvas,
-  drawElement,
-  drawText,
-  exportCanvas,
-  canvasDownload,
-} = require("../controllers/canvasController");
+router.get("/export-html", canvasController.exportCanvasHTML);
 
-router.post("/draw-canvas", drawCanvas);
-router.post("/draw-element", drawElement);
-router.post("/draw-text", drawText);
-router.get("/export-canvas", exportCanvas);
-router.get("/canvas-download", canvasDownload);
+/**
+ * @swagger
+ * /canvas/export-svg:
+ *   get:
+ *     summary: Export canvas as SVG file
+ *     tags: [Canvas]
+ *     responses:
+ *       200:
+ *         description: SVG file download
+ *         content:
+ *           image/svg+xml:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Canvas not initialized
+ *       500:
+ *         description: Error during file generation or download
+ */
+router.get("/export-svg", canvasController.exportCanvasSVG);
+
+/**
+ * @swagger
+ * /canvas/download:
+ *   get:
+ *     summary: Download canvas as PNG file
+ *     tags: [Canvas]
+ *     responses:
+ *       200:
+ *         description: PNG file download
+ *         content:
+ *           image/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Canvas not initialized
+ *       500:
+ *         description: Error during file generation or download
+ */
+router.get("/download", canvasController.canvasDownload);
 
 module.exports = router;
