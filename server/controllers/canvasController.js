@@ -266,6 +266,24 @@ const canvasDownload = (req, res) => {
   });
 };
 
+const clearCanvas = (req, res) => {
+  if (!context || !canvas) {
+    return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Canvas is not initialized" });
+  }
+
+  // Clear the canvas by filling it with a white rectangle
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "white";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Reset drawing commands
+  drawingCommands = [];
+
+  res.status(StatusCodes.OK).json({ message: "Canvas cleared successfully" });
+};
+
 module.exports = {
   drawCanvas,
   drawText,
@@ -273,4 +291,5 @@ module.exports = {
   exportCanvasHTML,
   exportCanvasSVG,
   canvasDownload,
+  clearCanvas
 };

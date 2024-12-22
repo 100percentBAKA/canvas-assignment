@@ -222,4 +222,26 @@ router.get("/export-svg", canvasController.exportCanvasSVG);
  */
 router.get("/download", canvasController.canvasDownload);
 
+/**
+ * @swagger
+ * /canvas/clear:
+ *   post:
+ *     summary: Clear the current canvas
+ *     tags: [Canvas]
+ *     responses:
+ *       200:
+ *         description: Canvas cleared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Canvas is not initialized
+ */
+router.post("/clear", canvasController.clearCanvas);
+
+
 module.exports = router;

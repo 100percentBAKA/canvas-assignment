@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+const cors = require("cors");
 
 // ! swagger
 const swaggerJSDoc = require("swagger-jsdoc");
@@ -10,6 +11,12 @@ const app = express();
 
 // ! middleware
 app.use(bodyParser.json());
+app.use(
+    cors({
+      origin: 'http://localhost:5173',
+      methods: ['GET', 'POST'],
+    })
+);
 
 // ! imports
 const helloRouter = require("./routes/helloRoute");
