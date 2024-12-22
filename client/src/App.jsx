@@ -14,14 +14,11 @@ const App = () => {
     height: 100,
   });
   const canvasRef = useRef(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [startY, setStartY] = useState(0);
 
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        const response = await fetch("http://localhost:8000/hello");
+        const response = await fetch("https://canvas-11.onrender.com/hello");
         const result = await response.json();
         console.log("Backend Connection Check:", result);
 
@@ -43,7 +40,9 @@ const App = () => {
 
   const exportCanvasHTML = async () => {
     try {
-      const response = await fetch("http://localhost:8000/canvas/export-html");
+      const response = await fetch(
+        "https://canvas-11.onrender.com/canvas/export-html"
+      );
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -62,7 +61,9 @@ const App = () => {
 
   const exportCanvasSVG = async () => {
     try {
-      const response = await fetch("http://localhost:8000/canvas/export-svg");
+      const response = await fetch(
+        "https://canvas-11.onrender.com/canvas/export-svg"
+      );
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -81,9 +82,12 @@ const App = () => {
 
   const clearCanvas = async () => {
     try {
-      const response = await fetch("http://localhost:8000/canvas/clear", {
-        method: "POST",
-      });
+      const response = await fetch(
+        "https://canvas-11.onrender.com/canvas/clear",
+        {
+          method: "POST",
+        }
+      );
 
       if (response.ok) {
         const canvas = canvasRef.current;
@@ -101,7 +105,9 @@ const App = () => {
 
   const downloadCanvasPNG = async () => {
     try {
-      const response = await fetch("http://localhost:8000/canvas/download");
+      const response = await fetch(
+        "https://canvas-11.onrender.com/canvas/download"
+      );
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -120,14 +126,19 @@ const App = () => {
 
   const handleShapeSubmit = async () => {
     if (!shapeProperties.x || !shapeProperties.y) {
-      alert("Please provide X and Y coordinates");
+      alert("Please provide X and Y coordinates.");
+      return;
+    }
+
+    // Validation for X and Y coordinates
+    if (shapeProperties.x > 400 || shapeProperties.y > 400) {
+      alert("X and Y coordinates must not exceed 400.");
       return;
     }
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    // Set the fill color
     ctx.fillStyle = color;
 
     if (selectedTool === "circle") {
@@ -139,20 +150,19 @@ const App = () => {
         0,
         Math.PI * 2
       );
-      ctx.fill(); // Fill the circle
+      ctx.fill();
     } else if (selectedTool === "rectangle") {
       ctx.fillRect(
         shapeProperties.x,
         shapeProperties.y,
         shapeProperties.width,
         shapeProperties.height
-      ); // Fill the rectangle
+      );
     }
 
-    // Send to backend
     try {
       const response = await fetch(
-        "http://localhost:8000/canvas/draw-element",
+        "https://canvas-11.onrender.com/canvas/draw-element",
         {
           method: "POST",
           headers: {
@@ -181,7 +191,13 @@ const App = () => {
 
   const handleTextSubmit = async () => {
     if (!shapeProperties.x || !shapeProperties.y || !text) {
-      alert("Please provide X, Y coordinates and text");
+      alert("Please provide X, Y coordinates and text.");
+      return;
+    }
+
+    // Validation for X and Y coordinates
+    if (shapeProperties.x > 400 || shapeProperties.y > 400) {
+      alert("X and Y coordinates must not exceed 400.");
       return;
     }
 
@@ -193,19 +209,22 @@ const App = () => {
     ctx.fillText(text, shapeProperties.x, shapeProperties.y);
 
     try {
-      const response = await fetch("http://localhost:8000/canvas/draw-text", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text,
-          x: shapeProperties.x,
-          y: shapeProperties.y,
-          fontSize,
-          color,
-        }),
-      });
+      const response = await fetch(
+        "https://canvas-11.onrender.com/canvas/draw-text",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text,
+            x: shapeProperties.x,
+            y: shapeProperties.y,
+            fontSize,
+            color,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to draw text");
     } catch (error) {
