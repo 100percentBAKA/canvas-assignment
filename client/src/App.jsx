@@ -447,10 +447,9 @@ const App = () => {
         </div>
       </Card>
 
-      {/* Export Options */}
       <Card className="max-w-6xl mx-auto p-6 bg-white mt-6">
         <div className="flex flex-col space-y-2">
-          <h3 className="text-lg font-semibold">Export Options</h3>
+          <h3 className="text-lg font-semibold">Options</h3>
           <div className="flex flex-row items-center space-x-4">
             <button
               onClick={exportCanvasHTML}
