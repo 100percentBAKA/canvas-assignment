@@ -85,7 +85,7 @@ server/
 #### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone --branch local https://github.com/100percentBAKA/canvas-assignment.git
 cd canvas-assignment
 ```
 
@@ -121,7 +121,7 @@ cd server
 npm start
 ```
 
-The client will be available at `http://localhost:5173` (if using Vite) and the server at `http://localhost:5000`.
+The client will be available at `http://localhost:5173` (if using Vite) and the server at `http://localhost:8000`.
 
 ## API Endpoints
 
@@ -148,6 +148,14 @@ PORT=8000
 ```
 
 ## Docker Instructions
+
+### Pull the Docker Image from Docker Hub using
+
+```bash
+docker pull ad4r5hgs/canvas-assignment:1.2
+```
+
+OR
 
 ### Build the Docker Image
 
